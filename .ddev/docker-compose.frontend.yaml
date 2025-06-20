@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+    frontend:
+        container_name: ddev-aimtrainer-frontend
+        image: node:24-alpine
+        working_dir: /var/www/frontend
+        volumes:
+            - ../frontend:/var/www/frontend:cached
+        ports:
+            - "3000:3000"
+        command: ["npm", "start"]
