@@ -6,6 +6,22 @@
 
   ddev start
 
+Зайти в контейнер:
+
+  ddev ssh
+
+== Установка проекта
+
+Чтобы установить проект, серверная часть:
+
+  cd symfony
+  composer install
+
+Чтобы установить проект, клиентская часть:
+
+  cd frontend
+  yarn install
+
 == Работа с базой данных
 
 База данных PostgreSQL хранится в Docker volume, название которого можно посмотреть командой:
@@ -15,6 +31,14 @@
 Обычно volume имеет имя вида:
 
   ddev-aimtrainer_db_data
+
+Подключение к базе данных:
+
+  host: aimtrainer.ddev.site
+  port: 5432
+  user: aimtrainer
+  password: aimtrainer
+  database: aimtrainer
 
 == Порты
 
