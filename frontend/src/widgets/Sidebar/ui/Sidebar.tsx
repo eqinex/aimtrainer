@@ -1,65 +1,109 @@
-import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {
+    Box,
+    Divider,
+    Drawer,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Toolbar,
+    Typography
+} from "@mui/material";
 import { memo } from "react";
 import { Link as RouterLink } from 'react-router-dom';
 import { sidebarItemsList } from "../model/selectors/getSidebarItems";
-import { SidebarItemType } from "../model/types/sidebar";
+import {
+    COLLAPSED_WIDTH,
+    EXPANDED_WIDTH,
+    SidebarItemType
+} from "../model/types/sidebar";
+import logo from '/logo.svg';
+import { useTheme } from "@mui/material/styles";
 
 interface SidebarProps {
-    open: boolean
+    collapsed: boolean
 }
-
-const COLLAPSED_WIDTH = 60;
-const EXPANDED_WIDTH = 240;
 
 const Sidebar = (props: SidebarProps) => {
     const {
-        open = true
+        collapsed = false
     } = props;
 
+    const theme = useTheme();
+
     return (
-        <Box
-            component="nav"
+        <Drawer
+            variant="permanent"
+            open={!collapsed}
             sx={{
-                width: open ? EXPANDED_WIDTH : COLLAPSED_WIDTH,
+                width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH,
                 flexShrink: 0,
-                bgcolor: 'background.paper',
-                borderRight: '1px solid',
-                borderColor: 'divider',
-                height: '100vh',
-                position: 'sticky',
-                top: 0,
-                transition: 'width 0.3s ease-in-out',
-                overflowX: 'hidden'
+                '& .MuiDrawer-paper': {
+                    width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH,
+                    transition: 'width 0.3s',
+                    overflowX: 'hidden',
+                    bgcolor: 'background.paper',
+                },
             }}
         >
+            <Toolbar
+                sx={{
+                    bgcolor: theme.palette.background.default,
+                    color: theme.palette.text.primary,
+                    justifyContent: collapsed ? 'center' : 'flex-start',
+                    px: collapsed ? 1 : 2,
+                    userSelect: 'none',
+                    fontWeight: 'bold',
+                }}
+            >
+                {collapsed ? (
+                    <Box component="img" src={logo} alt="Logo" sx={{ height: 32, width: 32 }} />
+                ) : (
+                    <Typography variant="h6" noWrap>
+                        AimTrainer
+                    </Typography>
+                )}
+            </Toolbar>
+            <Divider />
             <List>
                 {sidebarItemsList.map(({ path, Icon, text }: SidebarItemType) => (
-                    <ListItem key={path} disablePadding sx={{ display: 'block' }}>
+                    <ListItem key={path} disablePadding>
                         <ListItemButton
                             component={RouterLink}
                             to={path}
                             sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
+                                height: 48,
+                                px: 2,
+                                transition: 'padding 0.3s',
                             }}
                         >
                             <ListItemIcon
                                 sx={{
                                     minWidth: 0,
-                                    mr: open ? 2 : 'auto',
+                                    mr: collapsed ? 'auto' : 2,
                                     justifyContent: 'center',
+                                    transition: 'margin 0.3s',
                                 }}
                             >
                                 <Icon />
                             </ListItemIcon>
-                            {open && <ListItemText primary={text} />}
+                            <ListItemText
+                                primary={text}
+                                sx={{
+                                    opacity: collapsed ? 0 : 1,
+                                    maxWidth: collapsed ? 0 : '200px',
+                                    transition: 'opacity 0.3s, max-width 0.3s',
+                                    overflow: 'hidden',
+                                    whiteSpace: 'nowrap',
+                                }}
+                            />
                         </ListItemButton>
                     </ListItem>
+
                 ))}
             </List>
-            <Divider />
-        </Box>
+        </Drawer>
     );
 };
 
